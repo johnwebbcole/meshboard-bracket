@@ -1,6 +1,6 @@
 # meshboard-bracket
 
-![bracket](docs/mesboard-bracket.png)
+![bracket](https://github.com/johnwebbcole/meshboard-bracket/raw/master/docs/mesboard-bracket.png)
 
 > brackets for a synapse meshboard
 
