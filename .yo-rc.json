@@ -1,0 +1,7 @@
+{
+  "generator-jscad": {
+    "name": "meshboard-bracket",
+    "description": "brackets for a synapse meshboard",
+    "author": "John Cole"
+  }
+}
