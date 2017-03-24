@@ -8,7 +8,7 @@
 
 ## Running
 
-The jscad project `meshboard-bracket` uses gulp to create a `dist/meshboardBracket.jscad` file and watches your source for changes. You can drag the `dist/meshboardBracket.jscad` directory into the drop area on [openjscad.org](http://openjscad.org). Make sure you check `Auto Reload` and any time you save, gulp will recreate the `dist/meshboardBracket.jscad` file and your model should refresh.
+The jscad project `meshboard-bracket` uses gulp to create a `dist/meshboard-bracket.jscad` file and watches your source for changes. You can drag the `dist/meshboard-bracket.jscad` directory into the drop area on [openjscad.org](http://openjscad.org). Make sure you check `Auto Reload` and any time you save, gulp will recreate the `dist/meshboard-bracket.jscad` file and your model should refresh.
 
 ## jscad-utils
 
