@@ -7,13 +7,14 @@
 
 function getParameterDefinitions() {
   var parts = {
-      top_left: 'top left',
-      top_right: 'top right',
-      bottom_left: 'bottom left',
-      bottom_right: 'bottom right',
-      assembled: 'assembled'
+    top_left: 'top left',
+    top_right: 'top right',
+    bottom_left: 'bottom left',
+    bottom_right: 'bottom right',
+    assembled: 'assembled',
+    exploded: 'exploded',
   };
-  
+
   return [
     {
       name: 'resolution',
@@ -24,20 +25,21 @@ function getParameterDefinitions() {
         'low (8,24)',
         'normal (12,32)',
         'high (24,64)',
-        'very high (48,128)'
+        'very high (48,128)',
       ],
       initial: 2,
-      caption: 'Resolution:'
-    }, {
-        name: 'part',
-        type: 'choice',
-        values: Object.keys(parts),
-        captions: Object.keys(parts).map(function (key) {
-            return parts[key];
-        }),
-        initial: 'assembled',
-        caption: 'Part:'
-    }
+      caption: 'Resolution:',
+    },
+    {
+      name: 'part',
+      type: 'choice',
+      values: Object.keys(parts),
+      captions: Object.keys(parts).map(function(key) {
+        return parts[key];
+      }),
+      initial: 'exploded',
+      caption: 'Part:',
+    },
   ];
 }
 
@@ -122,24 +124,52 @@ function main(params) {
 
   var parts = {
     top_right: function() {
-      return union([rail, key, bracket3.parts.positive]).color('yellow');
+      return union([rail, key, bracket3.parts.positive])
+      .color('yellow')
+      .chamfer(0.5, 'z-');
     },
     top_left: function() {
       return parts.top_right().mirroredX();
     },
     bottom_right: function() {
-      return  union([
-        bracket2.parts.negative
-          .subtract([easment, rail.enlarge(0.5, 0.5, 0.5).stretch('x', 5).translate([-2.5, 0, 0])
+      return union([
+        bracket2.parts.negative.subtract([
+          easment,
+          rail.enlarge(0.5, 0.5, 0.5).stretch('x', 5).translate([-2.5, 0, 0]),
         ]),
-        bracket3.parts.negative.subtract([easment, key.enlarge(0.5, 0.5, 0.5)])]);
+        bracket3.parts.negative.subtract([easment, key.enlarge(0.5, 0.5, 0.5)]),
+      ]).chamfer(0.4, 'z-');
     },
     bottom_left: function() {
       return parts.bottom_right().mirroredX();
     },
     assembled: function() {
       return ['bottom_right', 'top_right'].map(part => parts[part]());
-    }
+    },
+    exploded: function() {
+      var gap = 2;
+      var explparts = [
+        'bottom_right',
+        'bottom_left',
+        'top_right'
+      ].reduce(
+        function(partarr, partname, idx) {
+          var part = parts[partname]();
+          if (partarr.length == 0) {
+            partarr.push(part.Zero());
+            return partarr;
+          } else {
+            partarr.push(part.snap(partarr[idx - 1], 'x', 'outside+').translate([-gap, 0, 0]).Zero());
+            return partarr;
+          }
+        },
+        []
+      );
+      
+      explparts.push(parts['top_left']().snap(explparts[2], 'y', 'outside-').translate([0, gap, 0]).align(explparts[2], 'x').Zero());
+      
+      return explparts;
+    },
   };
 
   var part = parts[params.part]();
